@@ -16,21 +16,17 @@ use tui::{
 use crate::app::{App, AppState, MenuItem};
 
 fn main() -> Result<(), io::Error> {
-    // Setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    // Create app state
     let mut app = App::new();
     
-    // Main loop
     let tick_rate = Duration::from_millis(100);
     let res = run_app(&mut terminal, &mut app, tick_rate);
 
-    // Restore terminal
     disable_raw_mode()?;
     execute!(
         terminal.backend_mut(),
@@ -59,15 +55,9 @@ fn run_app<B: Backend>(
                 match app.state {
                     AppState::MainMenu => {
                         match key.code {
-                            KeyCode::Char('q') => {
-                                return Ok(());
-                            }
-                            KeyCode::Down => {
-                                app.next();
-                            }
-                            KeyCode::Up => {
-                                app.previous();
-                            }
+                            KeyCode::Char('q') => return Ok(()),
+                            KeyCode::Down => app.next(),
+                            KeyCode::Up => app.previous(),
                             KeyCode::Enter => {
                                 match app.selected_item {
                                     MenuItem::MusicPlayer => app.state = AppState::MusicPlayer,

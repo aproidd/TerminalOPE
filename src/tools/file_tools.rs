@@ -8,11 +8,17 @@ pub struct FileTools {
 impl FileTools {
     pub fn new() -> Self {
         Self {
-            current_dir: home_dir(),
+            current_dir: Self::home_dir(),
             selected_files: Vec::new(),
         }
     }
 
+    fn home_dir() -> PathBuf {
+        std::env::var("HOME")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| PathBuf::from("/"))
+    }
+    
     pub fn change_directory(&mut self, _path: &str) {
         // Belum diimplementasikan
     }
@@ -25,11 +31,4 @@ impl FileTools {
         let path = self.current_dir.join(filename);
         self.selected_files.push(path);
     }
-}
-
-/// Fungsi fallback untuk mendapatkan home directory tanpa crate eksternal
-fn home_dir() -> PathBuf {
-    std::env::var("HOME")
-        .map(PathBuf::from)
-        .unwrap_or_else(|_| PathBuf::from("/"))
 }
